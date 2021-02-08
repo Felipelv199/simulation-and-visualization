@@ -1,3 +1,3 @@
 # Conway's Game of Life Simulation
 
-This simulation generates Conway's Game of Life. Using his four rules of life, this graphic simulation can use different types of patterns. This project is developed with python using matplotlib library.
+This Conway's Game of Life implementation uses python and matplotlib animations to generate a frame per frame simulation. Using his four rules of life, this graphic simulation can use different types of patterns.

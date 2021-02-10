@@ -18,9 +18,12 @@ def addBlinker(grid: np.ndarray, i: int, j: int) -> None:
 
 def checkRulesOfLife(grid: np.ndarray, i: int, j: int) -> int:
     live_neighbors = 0
+    n, m = grid.shape
     for y in range(-1, 2):
         for x in range(-1, 2):
             if y == 0 and x == 0:
+                continue
+            if i+y < 0 or i+y >= n or j+x < 0 or j+x >= m:
                 continue
             if grid[i+y, j+x] == 255:
                 live_neighbors += 1
@@ -34,8 +37,8 @@ def checkRulesOfLife(grid: np.ndarray, i: int, j: int) -> int:
 def iterateGrid(grid: np.ndarray) -> np.ndarray:
     newGrid = np.copy(grid)
     n, m = grid.shape
-    for y in range(1, n-1):
-        for x in range(1, m-1):
+    for y in range(0, n):
+        for x in range(0, m):
             newGrid[y, x] = checkRulesOfLife(grid, y, x)
     return newGrid
 

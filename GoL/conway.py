@@ -1,5 +1,5 @@
 """
-conway.py 
+conway.py
 A simple Python/matplotlib implementation of Conway's Game of Life.
 """
 
@@ -65,6 +65,7 @@ def iterateGrid(grid: np.ndarray) -> np.ndarray:
             configs.checkLoaf(grid, y, x)
             configs.checkBeehive(grid, y, x)
             configs.checkBlock(grid, y, x)
+            configs.checkOthers(grid, y, x)
     print(configs.frameConfigs)
     return newGrid
 
@@ -84,9 +85,9 @@ def readInput(f: IO):
             grid[x, y] = 255
 
     fig, ax = plt.subplots()
-    img = ax.imshow(grid, interpolation='nearest')
+    img = ax.imshow(grid, cmap='gray', interpolation='nearest')
     ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES,),
-                                  frames=FRAMES, interval=200, repeat=True)
+                                  frames=FRAMES, interval=200, repeat=False)
     plt.show()
 
 

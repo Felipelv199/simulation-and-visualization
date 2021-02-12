@@ -116,3 +116,40 @@ class Configurations:
                 self.frameConfigs[subGridName] = 1
 
             self.grid[i:i+n, j:j+m] = 1
+
+    def checkOthers(self, grid: np.ndarray, i: int, j: int) -> None:
+        if grid[i, j] == 0:
+            return
+        other = self.growing(grid, i, j, 255)
+        if len(other) > 0:
+            try:
+                self.frameConfigs['others'] += 1
+            except:
+                self.frameConfigs['others'] = 1
+
+    def growing(self, grid, i, j, colorVal):
+        regionPixels = []
+        colaPoints = []
+        if self.grid[i, j] == 0:
+            regionPixels.append((i, j))
+            n, m = grid.shape
+            for k in range(-1, 2):
+                for l in range(-1, 2):
+                    if k == 0 and l == 0:
+                        continue
+                    if i+k >= 0 and i+k < n and j+l >= 0 and j+l < m:
+                        colaPoints.append((i+k, j+l))
+            while len(colaPoints) > 0:
+                pt1 = colaPoints.pop(0)
+                if grid[pt1[0], pt1[1]] == colorVal:
+                    if self.grid[pt1[0], pt1[1]] == 0:
+                        regionPixels.append(pt1)
+                        self.grid[pt1[0], pt1[1]] = 1
+                        for k in range(-1, 2):
+                            for l in range(-1, 2):
+                                if k == 0 and l == 0:
+                                    continue
+                                if pt1[0]+k >= 0 and pt1[0]+k < n and pt1[1]+l >= 0 and pt1[1]+l < m:
+                                    if self.grid[pt1[0]+k, pt1[1]+l] == 0:
+                                        colaPoints.append((pt1[0]+k, pt1[1]+l))
+        return regionPixels

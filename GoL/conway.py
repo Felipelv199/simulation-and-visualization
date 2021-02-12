@@ -12,7 +12,7 @@ import matplotlib.image as mltimg
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from numpy.core.fromnumeric import repeat
-from configurations import *
+from configurations import Configurations
 
 
 def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, N: int, M: int):
@@ -46,12 +46,17 @@ def checkRulesOfLife(grid: np.ndarray, i: int, j: int) -> int:
 
 
 def iterateGrid(grid: np.ndarray) -> np.ndarray:
-    configurationsPF = {'blinker': 0}
     newGrid = np.copy(grid)
     n, m = grid.shape
+    configs = Configurations(n, m)
     for y in range(0, n):
         for x in range(0, m):
             newGrid[y, x] = checkRulesOfLife(grid, y, x)
+            configs.checkLightWeightSpaceship(grid, y, x)
+            configs.checkGlider(grid, y, x)
+            configs.checkBeacon(grid, y, x)
+            configs.checkBlinker(grid, y, x)
+    print(configs.frameConfigs)
     return newGrid
 
 
@@ -69,10 +74,12 @@ def readInput(f: IO):
         if x >= 0 and x < n and y >= 0 and y < m:
             grid[x, y] = 255
 
+    iterateGrid(grid)
+
     fig, ax = plt.subplots()
     img = ax.imshow(grid, interpolation='nearest')
     ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, M,),
-                                  frames=FRAMES, repeat=True)
+                                  frames=FRAMES, interval=1, repeat=True)
     plt.show()
 
 

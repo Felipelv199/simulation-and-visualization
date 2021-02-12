@@ -3,7 +3,6 @@ conway.py
 A simple Python/matplotlib implementation of Conway's Game of Life.
 """
 
-from io import FileIO
 import sys
 import argparse
 from typing import IO
@@ -15,7 +14,7 @@ from numpy.core.fromnumeric import repeat
 from configurations import Configurations
 
 
-def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, original: np.ndarray, T: int):
+def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, original: np.ndarray, T: int) -> mltimg.AxesImage:
     # copy grid since we require 8 neighbors for calculation
     # and we go line by line
 
@@ -52,20 +51,25 @@ def iterateGrid(grid: np.ndarray) -> np.ndarray:
     newGrid = np.copy(grid)
     n, m = grid.shape
     configs = Configurations(n, m)
+
     for y in range(0, n):
         for x in range(0, m):
             newGrid[y, x] = checkRulesOfLife(grid, y, x)
-            configs.checkLightWeightSpaceship(grid, y, x)
-            configs.checkGlider(grid, y, x)
-            configs.checkBeacon(grid, y, x)
-            configs.checkToad(grid, y, x)
-            configs.checkBlinker(grid, y, x)
-            configs.checkTub(grid, y, x)
-            configs.checkBoat(grid, y, x)
-            configs.checkLoaf(grid, y, x)
-            configs.checkBeehive(grid, y, x)
-            configs.checkBlock(grid, y, x)
-            configs.checkOthers(grid, y, x)
+
+    for y in range(0, n):
+        for x in range(0, m):
+            configs.checkLightWeightSpaceship(newGrid, y, x)
+            configs.checkGlider(newGrid, y, x)
+            configs.checkBeacon(newGrid, y, x)
+            configs.checkToad(newGrid, y, x)
+            configs.checkBlinker(newGrid, y, x)
+            configs.checkTub(newGrid, y, x)
+            configs.checkBoat(newGrid, y, x)
+            configs.checkLoaf(newGrid, y, x)
+            configs.checkBeehive(newGrid, y, x)
+            configs.checkBlock(newGrid, y, x)
+            configs.checkOthers(newGrid, y, x)
+
     print(configs.frameConfigs)
     return newGrid
 

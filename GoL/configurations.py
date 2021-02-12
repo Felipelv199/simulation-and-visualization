@@ -1,9 +1,10 @@
+from typing import List, Literal
 import numpy as np
 
 
 class Configurations:
 
-    def __init__(self, n, m) -> None:
+    def __init__(self, n: int, m: int) -> None:
         self.frameConfigs = {}
         self.grid = np.zeros(n*m).reshape(n, m)
 
@@ -43,7 +44,8 @@ class Configurations:
                              [255]]),
                    np.array([[255, 255, 255], ]), ]
         for x in blinker:
-            self.checkConfig(grid, x, 'blinker', i, j)
+            if self.checkConfig(grid, x, 'blinker', i, j):
+                return
 
     def checkToad(self, grid: np.ndarray, i: int, j: int) -> None:
         toad = [np.array([[0,   0, 255,   0],
@@ -53,7 +55,8 @@ class Configurations:
                 np.array([[0,   255, 255, 255],
                           [255, 255, 255,   0], ]), ]
         for x in toad:
-            self.checkConfig(grid, x, 'toad', i, j)
+            if self.checkConfig(grid, x, 'toad', i, j):
+                return
 
     def checkBeacon(self, grid: np.ndarray, i: int, j: int) -> None:
         beacon = [np.array([[255, 255, 0,     0],
@@ -65,7 +68,8 @@ class Configurations:
                             [0,     0,   0, 255],
                             [0,     0, 255, 255], ]), ]
         for x in beacon:
-            self.checkConfig(grid, x, 'beacon', i, j)
+            if self.checkConfig(grid, x, 'beacon', i, j):
+                return
 
     def checkGlider(self, grid: np.ndarray, i: int, j: int) -> None:
         glider = [np.array([[0,   255,   0, ],
@@ -81,7 +85,8 @@ class Configurations:
                             [0,   255, 255, ],
                             [255, 255,   0, ], ]), ]
         for x in glider:
-            self.checkConfig(grid, x, 'glider', i, j)
+            if self.checkConfig(grid, x, 'glider', i, j):
+                return
 
     def checkLightWeightSpaceship(self, grid: np.ndarray, i: int, j: int) -> None:
         lightWeightSpaceship = [np.array([[255, 0,   0, 255,   0],
@@ -101,9 +106,10 @@ class Configurations:
                                           [255, 255,   0, 255, 255],
                                           [0,     0, 255, 255,   0], ]), ]
         for x in lightWeightSpaceship:
-            self.checkConfig(grid, x, 'lightWeightSpaceship', i, j)
+            if self.checkConfig(grid, x, 'lightWeightSpaceship', i, j):
+                return
 
-    def checkConfig(self, grid, subGrid, subGridName, i, j):
+    def checkConfig(self, grid: np.ndarray, subGrid: np.ndarray, subGridName: Literal, i, j) -> bool:
         n, m = subGrid.shape
 
         if np.all(self.grid[i:i+n, j:j+m] == 1):
@@ -116,20 +122,26 @@ class Configurations:
                 self.frameConfigs[subGridName] = 1
 
             self.grid[i:i+n, j:j+m] = 1
+            return True
+
+        return False
 
     def checkOthers(self, grid: np.ndarray, i: int, j: int) -> None:
         if grid[i, j] == 0:
             return
+
         other = self.growing(grid, i, j, 255)
+
         if len(other) > 0:
             try:
                 self.frameConfigs['others'] += 1
             except:
                 self.frameConfigs['others'] = 1
 
-    def growing(self, grid, i, j, colorVal):
+    def growing(self, grid: np.ndarray, i: int, j: int, colorVal: int) -> list:
         regionPixels = []
         colaPoints = []
+
         if self.grid[i, j] == 0:
             regionPixels.append((i, j))
             n, m = grid.shape

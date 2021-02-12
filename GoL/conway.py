@@ -15,15 +15,18 @@ from numpy.core.fromnumeric import repeat
 from configurations import Configurations
 
 
-def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, N: int, M: int):
+def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, original: np.ndarray, T: int):
     # copy grid since we require 8 neighbors for calculation
     # and we go line by line
+
     newGrid = iterateGrid(grid)
     # TODO: Implement the rules of Conway's Game of Life
-
     # update data
     img.set_data(newGrid)
-    grid[:] = newGrid[:]
+    if frameNum == T-1:
+        grid[:] = original[:]
+    else:
+        grid[:] = newGrid[:]
     return img,
 
 
@@ -55,7 +58,13 @@ def iterateGrid(grid: np.ndarray) -> np.ndarray:
             configs.checkLightWeightSpaceship(grid, y, x)
             configs.checkGlider(grid, y, x)
             configs.checkBeacon(grid, y, x)
+            configs.checkToad(grid, y, x)
             configs.checkBlinker(grid, y, x)
+            configs.checkTub(grid, y, x)
+            configs.checkBoat(grid, y, x)
+            configs.checkLoaf(grid, y, x)
+            configs.checkBeehive(grid, y, x)
+            configs.checkBlock(grid, y, x)
     print(configs.frameConfigs)
     return newGrid
 
@@ -74,12 +83,10 @@ def readInput(f: IO):
         if x >= 0 and x < n and y >= 0 and y < m:
             grid[x, y] = 255
 
-    iterateGrid(grid)
-
     fig, ax = plt.subplots()
     img = ax.imshow(grid, interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, M,),
-                                  frames=FRAMES, interval=1, repeat=True)
+    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES,),
+                                  frames=FRAMES, interval=200, repeat=True)
     plt.show()
 
 

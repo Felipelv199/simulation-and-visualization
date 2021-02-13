@@ -95,6 +95,23 @@ def readInput(f: IO):
     plt.show()
 
 
+def randomGrid(N):
+    """returns a grid of NxN random values"""
+    return np.random.choice([255, 0], N*N, p=[0.2, 0.8]).reshape(N, N)
+
+
+def default():
+    N = 100
+    FRAMES = 200
+    grid = randomGrid(N)
+
+    fig, ax = plt.subplots()
+    img = ax.imshow(grid, cmap='gray', interpolation='nearest')
+    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES,),
+                                  frames=FRAMES, interval=1, repeat=False)
+    plt.show()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Runs Conway's Game of Life system.py.")
@@ -102,11 +119,10 @@ def main() -> None:
     file = None
     try:
         file = open(sys.argv[1])
+        readInput(file)
     except:
         print('An error has occurred')
-
-    if file:
-        readInput(file)
+        default()
 
 
 if __name__ == '__main__':

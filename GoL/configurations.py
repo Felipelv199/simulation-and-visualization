@@ -11,32 +11,32 @@ class Configurations:
     def checkBlock(self, grid: np.ndarray, i: int, j: int) -> None:
         block = np.array([[255, 255, ],
                           [255, 255, ], ])
-        self.checkConfig(grid, block, 'block', i, j)
+        self.checkConfig(grid, block, 'Block', i, j)
 
     def checkBeehive(self, grid: np.ndarray, i: int, j: int) -> None:
         beehive = np.array([[0, 255, 255,   0, ],
                             [255, 0,   0, 255, ],
                             [0, 255, 255,   0, ]])
-        self.checkConfig(grid, beehive, 'beehive', i, j)
+        self.checkConfig(grid, beehive, 'Beehive', i, j)
 
     def checkLoaf(self, grid: np.ndarray, i: int, j: int) -> None:
         loaf = np.array([[0, 255, 255, 0, ],
                          [255, 0,   0, 255, ],
                          [0, 255,   0, 255, ],
                          [0,   0, 255, 0, ]])
-        self.checkConfig(grid, loaf, 'loaf', i, j)
+        self.checkConfig(grid, loaf, 'Loaf', i, j)
 
     def checkBoat(self, grid: np.ndarray, i: int, j: int) -> None:
         boat = np.array([[255, 255,   0, ],
                          [255,   0, 255, ],
                          [0,   255,   0, ]])
-        self.checkConfig(grid, boat, 'boat', i, j)
+        self.checkConfig(grid, boat, 'Boat', i, j)
 
     def checkTub(self, grid: np.ndarray, i: int, j: int) -> None:
         tub = np.array([[0, 255,   0, ],
                         [255, 0, 255, ],
                         [0, 255,   0, ]])
-        self.checkConfig(grid, tub, 'tub', i, j)
+        self.checkConfig(grid, tub, 'Tub', i, j)
 
     def checkBlinker(self, grid: np.ndarray, i: int, j: int) -> None:
         blinker = [np.array([[255],
@@ -44,7 +44,7 @@ class Configurations:
                              [255]]),
                    np.array([[255, 255, 255], ]), ]
         for x in blinker:
-            if self.checkConfig(grid, x, 'blinker', i, j):
+            if self.checkConfig(grid, x, 'Blinker', i, j):
                 return
 
     def checkToad(self, grid: np.ndarray, i: int, j: int) -> None:
@@ -55,7 +55,7 @@ class Configurations:
                 np.array([[0,   255, 255, 255],
                           [255, 255, 255,   0], ]), ]
         for x in toad:
-            if self.checkConfig(grid, x, 'toad', i, j):
+            if self.checkConfig(grid, x, 'Toad', i, j):
                 return
 
     def checkBeacon(self, grid: np.ndarray, i: int, j: int) -> None:
@@ -68,7 +68,7 @@ class Configurations:
                             [0,     0,   0, 255],
                             [0,     0, 255, 255], ]), ]
         for x in beacon:
-            if self.checkConfig(grid, x, 'beacon', i, j):
+            if self.checkConfig(grid, x, 'Beacon', i, j):
                 return
 
     def checkGlider(self, grid: np.ndarray, i: int, j: int) -> None:
@@ -85,7 +85,7 @@ class Configurations:
                             [0,   255, 255, ],
                             [255, 255,   0, ], ]), ]
         for x in glider:
-            if self.checkConfig(grid, x, 'glider', i, j):
+            if self.checkConfig(grid, x, 'Glider', i, j):
                 return
 
     def checkLightWeightSpaceship(self, grid: np.ndarray, i: int, j: int) -> None:
@@ -106,7 +106,7 @@ class Configurations:
                                           [255, 255,   0, 255, 255],
                                           [0,     0, 255, 255,   0], ]), ]
         for x in lightWeightSpaceship:
-            if self.checkConfig(grid, x, 'lightWeightSpaceship', i, j):
+            if self.checkConfig(grid, x, 'LightWeightSpaceship', i, j):
                 return
 
     def checkConfig(self, grid: np.ndarray, subGrid: np.ndarray, subGridName: Literal, i, j) -> bool:
@@ -134,9 +134,9 @@ class Configurations:
 
         if len(other) > 0:
             try:
-                self.frameConfigs['others'] += 1
+                self.frameConfigs['Others'] += 1
             except:
-                self.frameConfigs['others'] = 1
+                self.frameConfigs['Others'] = 1
 
     def growing(self, grid: np.ndarray, i: int, j: int, colorVal: int) -> list:
         regionPixels = []

@@ -10,8 +10,8 @@ To run this program, it is necessary to give an input file, otherwise, it will g
 
 ### Input Format
 
-The first line contains two space-separated integers that denote the dimensions of the grid.
-The second line contains an integer that denotes the frame number of the animation.
+The first line contains two space-separated integers that denote the dimensions of the grid.  
+The second line contains an integer that denotes the frame number of the animation.  
 The next lines until the end of the file contain the position of the grid live cells. If these positions are out of bounds it will not use that position, and it will move to the next.
 
 If your gonna use an input file you must provide your file relative path:

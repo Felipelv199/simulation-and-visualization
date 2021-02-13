@@ -3,6 +3,7 @@ conway.py
 A simple Python/matplotlib implementation of Conway's Game of Life.
 """
 
+from os import write
 import sys
 import argparse
 from typing import IO
@@ -14,11 +15,11 @@ from numpy.core.fromnumeric import repeat
 from configurations import Configurations
 
 
-def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, original: np.ndarray, T: int) -> mltimg.AxesImage:
+def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, original: np.ndarray, T: int, conf: dict, file: IO) -> mltimg.AxesImage:
     # copy grid since we require 8 neighbors for calculation
     # and we go line by line
 
-    newGrid = iterateGrid(grid)
+    newGrid = iterateGrid(grid, conf, file, frameNum)
     # TODO: Implement the rules of Conway's Game of Life
     # update data
     img.set_data(newGrid)
@@ -47,7 +48,7 @@ def checkRulesOfLife(grid: np.ndarray, i: int, j: int) -> int:
     return 0
 
 
-def iterateGrid(grid: np.ndarray) -> np.ndarray:
+def iterateGrid(grid: np.ndarray, conf: dict, file: IO, i: int) -> np.ndarray:
     newGrid = np.copy(grid)
     n, m = grid.shape
     configs = Configurations(n, m)
@@ -70,7 +71,14 @@ def iterateGrid(grid: np.ndarray) -> np.ndarray:
             configs.checkBlock(newGrid, y, x)
             configs.checkOthers(newGrid, y, x)
 
-    print(configs.frameConfigs)
+    for x in configs.frameConfigs:
+        try:
+            conf[x] += configs.frameConfigs[x]
+        except:
+            conf[x] = configs.frameConfigs[x]
+        file.write('{:^7}|{:15}|{:^8}\n'.format(
+            i+1, x, configs.frameConfigs[x]))
+    file.write(' -------------------------------\n')
     return newGrid
 
 
@@ -78,6 +86,7 @@ def readInput(f: IO):
     N, M = [int(x) for x in f.readline().split(' ')]
     FRAMES = int(f.readline())
     grid = np.zeros(N*M).reshape(N, M)
+    globalConfigs = {}
 
     while True:
         l = f.readline()
@@ -90,39 +99,61 @@ def readInput(f: IO):
 
     fig, ax = plt.subplots()
     img = ax.imshow(grid, cmap='gray', interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES,),
+    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES, globalConfigs),
                                   frames=FRAMES, interval=200, repeat=False)
     plt.show()
 
 
-def randomGrid(N):
+def randomGrid(N, M):
     """returns a grid of NxN random values"""
-    return np.random.choice([255, 0], N*N, p=[0.2, 0.8]).reshape(N, N)
-
-
-def default():
-    N = 100
-    FRAMES = 200
-    grid = randomGrid(N)
-
-    fig, ax = plt.subplots()
-    img = ax.imshow(grid, cmap='gray', interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES,),
-                                  frames=FRAMES, interval=1, repeat=False)
-    plt.show()
+    return np.random.choice([255, 0], N*M, p=[0.2, 0.8]).reshape(N, M)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Runs Conway's Game of Life system.py.")
 
-    file = None
+    N = 0
+    M = 0
+    FRAMES = 0
+    grid = np.array([])
+    globalConfigs = {}
+
     try:
         file = open(sys.argv[1])
-        readInput(file)
+        N, M = [int(x) for x in file.readline().split(' ')]
+        FRAMES = int(file.readline())
+        grid = np.zeros(N*M).reshape(N, M)
+        globalConfigs = {}
+
+        while True:
+            l = file.readline()
+            if not l:
+                break
+            x, y = [int(x) for x in l.split(' ')]
+            n, m = grid.shape
+            if x >= 0 and x < n and y >= 0 and y < m:
+                grid[x, y] = 255
     except:
         print('An error has occurred')
-        default()
+        N = 50
+        M = 50
+        FRAMES = 100
+        grid = randomGrid(N, M)
+
+    exitFile = open('output.txt', 'w+')
+    exitFile.write(' FRAME | CONFIGURATION | NUMBER \n')
+    exitFile.write(' ===============================\n')
+    fig, ax = plt.subplots()
+    img = ax.imshow(grid, cmap='gray', interpolation='nearest')
+    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES, globalConfigs, exitFile),
+                                  frames=FRAMES, interval=1, repeat=False)
+    plt.show()
+    for x in globalConfigs:
+        exitFile.write(' FINAL |{:15}|{:^8}\n'.format(x, globalConfigs[x]))
+    exitFile.write(' -------------------------------\n')
+    print()
+    exitFile.close()
 
 
 if __name__ == '__main__':

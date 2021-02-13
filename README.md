@@ -1,1 +1,1 @@
-# simulation-and-visualization
+# Simulation and Visualization

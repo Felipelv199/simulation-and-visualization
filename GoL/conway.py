@@ -25,6 +25,7 @@ def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, original: np.
     img.set_data(newGrid)
     if frameNum == T-1:
         grid[:] = original[:]
+        plt.close()
     else:
         grid[:] = newGrid[:]
     return img,
@@ -76,9 +77,9 @@ def iterateGrid(grid: np.ndarray, conf: dict, file: IO, i: int) -> np.ndarray:
             conf[x] += configs.frameConfigs[x]
         except:
             conf[x] = configs.frameConfigs[x]
-        file.write('{:^7}|{:15}|{:^8}\n'.format(
+        file.write(' {:^7}| {:<13} | {:>6}\n'.format(
             i+1, x, configs.frameConfigs[x]))
-    file.write(' -------------------------------\n')
+    file.write(' --------------------------------\n')
     return newGrid
 
 
@@ -134,24 +135,26 @@ def main() -> None:
             n, m = grid.shape
             if x >= 0 and x < n and y >= 0 and y < m:
                 grid[x, y] = 255
+        print('Using input file')
     except:
-        print('An error has occurred')
         N = 50
         M = 50
-        FRAMES = 100
+        FRAMES = 20
         grid = randomGrid(N, M)
+        print('Using default values')
 
     exitFile = open('output.out', 'w+')
-    exitFile.write(' FRAME | CONFIGURATION | NUMBER \n')
-    exitFile.write(' ===============================\n')
+    exitFile.write('  FRAME | CONFIGURATION | NUMBER \n')
+    exitFile.write(' ================================\n')
     fig, ax = plt.subplots()
     img = ax.imshow(grid, cmap='gray', interpolation='nearest')
     ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES, globalConfigs, exitFile),
                                   frames=FRAMES, interval=1, repeat=False)
     plt.show()
     for x in globalConfigs:
-        exitFile.write(' FINAL |{:15}|{:^8}\n'.format(x, globalConfigs[x]))
-    exitFile.write(' -------------------------------\n')
+        exitFile.write(
+            '  FINAL | {:<13} | {:>6}\n'.format(x, globalConfigs[x]))
+    exitFile.write(' --------------------------------\n')
     print()
     exitFile.close()
 

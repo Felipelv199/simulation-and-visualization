@@ -34,30 +34,24 @@ def checkRulesOfLife(grid: np.ndarray, i: int, j: int) -> int:
     return 0
 
 
-def iterateGrid(grid: np.ndarray, conf: dict, file: IO, i: int) -> np.ndarray:
-    # Apply Game of Life rules to the grid
-    newGrid = np.copy(grid)
+def updateConfigCounter(grid: np.ndarray, conf: dict, file: IO, frame: int) -> None:
     n, m = grid.shape
     configs = Configurations(n, m)
-
-    for y in range(0, n):
-        for x in range(0, m):
-            newGrid[y, x] = checkRulesOfLife(grid, y, x)
 
     # Count the number of configurations in the resultant grid
     for y in range(0, n):
         for x in range(0, m):
-            configs.checkLightWeightSpaceship(newGrid, y, x)
-            configs.checkGlider(newGrid, y, x)
-            configs.checkBeacon(newGrid, y, x)
-            configs.checkToad(newGrid, y, x)
-            configs.checkBlinker(newGrid, y, x)
-            configs.checkTub(newGrid, y, x)
-            configs.checkBoat(newGrid, y, x)
-            configs.checkLoaf(newGrid, y, x)
-            configs.checkBeehive(newGrid, y, x)
-            configs.checkBlock(newGrid, y, x)
-            configs.checkOthers(newGrid, y, x)
+            configs.checkLightWeightSpaceship(grid, y, x)
+            configs.checkGlider(grid, y, x)
+            configs.checkBeacon(grid, y, x)
+            configs.checkToad(grid, y, x)
+            configs.checkBlinker(grid, y, x)
+            configs.checkTub(grid, y, x)
+            configs.checkBoat(grid, y, x)
+            configs.checkLoaf(grid, y, x)
+            configs.checkBeehive(grid, y, x)
+            configs.checkBlock(grid, y, x)
+            configs.checkOthers(grid, y, x)
 
     # Update configurations final count and add frame configurations count to the output
     for x in configs.frameConfigs:
@@ -66,15 +60,26 @@ def iterateGrid(grid: np.ndarray, conf: dict, file: IO, i: int) -> np.ndarray:
         except:
             conf[x] = configs.frameConfigs[x]
         file.write(' {:^7}| {:<13} | {:>6}\n'.format(
-            i+1, x, configs.frameConfigs[x]))
+            frame, x, configs.frameConfigs[x]))
     file.write(' --------------------------------\n')
+
+
+def iterateGrid(grid: np.ndarray, conf: dict, file: IO, frame: int) -> np.ndarray:
+    # Apply Game of Life rules to the grid
+    newGrid = np.copy(grid)
+    n, m = grid.shape
+
+    for y in range(0, n):
+        for x in range(0, m):
+            newGrid[y, x] = checkRulesOfLife(grid, y, x)
+
+    updateConfigCounter(grid, conf, file, frame)
 
     # Return the updated grid
     return newGrid
 
 
 def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, initialGrid: np.ndarray, framesTotal: int, configurations: dict, file: IO) -> mltimg.AxesImage:
-
     newGrid = iterateGrid(grid, configurations, file, frameNum)
 
     # Update frame image
@@ -137,8 +142,8 @@ def main() -> None:
     # Animation configuration, initialization, and displayed
     fig, ax = plt.subplots()
     img = ax.imshow(grid, cmap='gray', interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES, configurationsCount, exitFile),
-                                  frames=FRAMES, interval=1, repeat=False)
+    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES, configurationsCount, exitFile,),
+                                  frames=FRAMES, interval=10, repeat=False)
     plt.show()
 
     # Update final count per configuration

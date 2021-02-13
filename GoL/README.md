@@ -8,7 +8,7 @@ To run this program, it is necessary to give an input file, otherwise, it will g
 - Grid Dimensions: 50 x 50
 - Animation Frames Number: 200
 
-### Input Format
+### Input File Format
 
 The first line contains two space-separated integers that denote the dimensions of the grid.  
 The second line contains an integer that denotes the frame number of the animation.  
@@ -19,3 +19,7 @@ If your gonna use an input file you must provide your file relative path:
     python conway.py [FilePath]
     
 In case that is an error with the file relative path, it will run the default configuration.
+
+### Output File Format
+
+It will return the numbers of configurations recognized by the program and the ones that are not recognized are classified as other. The numbers will correspond to the times that a configuration appears in the frame and also the final count per configuration.

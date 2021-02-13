@@ -3,7 +3,6 @@ conway.py
 A simple Python/matplotlib implementation of Conway's Game of Life.
 """
 
-from os import write
 import sys
 import argparse
 from typing import IO
@@ -11,7 +10,6 @@ import numpy as np
 import matplotlib.image as mltimg
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from numpy.core.fromnumeric import repeat
 from configurations import Configurations
 
 
@@ -27,6 +25,8 @@ def checkRulesOfLife(grid: np.ndarray, i: int, j: int) -> int:
                 continue
             if grid[i+y, j+x] == 255:
                 live_neighbors += 1
+
+    # Returns an int value that activates or deactivates the life of one pixel in the image
     if grid[i, j] == 255 and (live_neighbors == 2 or live_neighbors == 3):
         return 255
     elif grid[i, j] == 0 and live_neighbors == 3:
@@ -68,6 +68,8 @@ def iterateGrid(grid: np.ndarray, conf: dict, file: IO, i: int) -> np.ndarray:
         file.write(' {:^7}| {:<13} | {:>6}\n'.format(
             i+1, x, configs.frameConfigs[x]))
     file.write(' --------------------------------\n')
+
+    # Return the updated grid
     return newGrid
 
 
@@ -88,8 +90,8 @@ def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, initialGrid: 
     return img,
 
 
-def randomGrid(N, M):
-    """returns a grid of NxN random values"""
+def randomGrid(N: int, M: int) -> np.ndarray:
+    # Returns a grid of NxN random values
     return np.random.choice([255, 0], N*M, p=[0.2, 0.8]).reshape(N, M)
 
 

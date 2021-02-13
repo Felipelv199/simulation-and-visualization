@@ -15,23 +15,8 @@ from numpy.core.fromnumeric import repeat
 from configurations import Configurations
 
 
-def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, original: np.ndarray, T: int, conf: dict, file: IO) -> mltimg.AxesImage:
-    # copy grid since we require 8 neighbors for calculation
-    # and we go line by line
-
-    newGrid = iterateGrid(grid, conf, file, frameNum)
-    # TODO: Implement the rules of Conway's Game of Life
-    # update data
-    img.set_data(newGrid)
-    if frameNum == T-1:
-        grid[:] = original[:]
-        plt.close()
-    else:
-        grid[:] = newGrid[:]
-    return img,
-
-
 def checkRulesOfLife(grid: np.ndarray, i: int, j: int) -> int:
+    # Game of Life Rules
     live_neighbors = 0
     n, m = grid.shape
     for y in range(-1, 2):
@@ -50,6 +35,7 @@ def checkRulesOfLife(grid: np.ndarray, i: int, j: int) -> int:
 
 
 def iterateGrid(grid: np.ndarray, conf: dict, file: IO, i: int) -> np.ndarray:
+    # Apply Game of Life rules to the grid
     newGrid = np.copy(grid)
     n, m = grid.shape
     configs = Configurations(n, m)
@@ -58,6 +44,7 @@ def iterateGrid(grid: np.ndarray, conf: dict, file: IO, i: int) -> np.ndarray:
         for x in range(0, m):
             newGrid[y, x] = checkRulesOfLife(grid, y, x)
 
+    # Count the number of configurations in the resultant grid
     for y in range(0, n):
         for x in range(0, m):
             configs.checkLightWeightSpaceship(newGrid, y, x)
@@ -72,6 +59,7 @@ def iterateGrid(grid: np.ndarray, conf: dict, file: IO, i: int) -> np.ndarray:
             configs.checkBlock(newGrid, y, x)
             configs.checkOthers(newGrid, y, x)
 
+    # Update configurations final count and add frame configurations count to the output
     for x in configs.frameConfigs:
         try:
             conf[x] += configs.frameConfigs[x]
@@ -83,26 +71,21 @@ def iterateGrid(grid: np.ndarray, conf: dict, file: IO, i: int) -> np.ndarray:
     return newGrid
 
 
-def readInput(f: IO):
-    N, M = [int(x) for x in f.readline().split(' ')]
-    FRAMES = int(f.readline())
-    grid = np.zeros(N*M).reshape(N, M)
-    globalConfigs = {}
+def update(frameNum: int, img: mltimg.AxesImage, grid: np.ndarray, initialGrid: np.ndarray, framesTotal: int, configurations: dict, file: IO) -> mltimg.AxesImage:
 
-    while True:
-        l = f.readline()
-        if not l:
-            break
-        x, y = [int(x) for x in l.split(' ')]
-        n, m = grid.shape
-        if x >= 0 and x < n and y >= 0 and y < m:
-            grid[x, y] = 255
+    newGrid = iterateGrid(grid, configurations, file, frameNum)
 
-    fig, ax = plt.subplots()
-    img = ax.imshow(grid, cmap='gray', interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES, globalConfigs),
-                                  frames=FRAMES, interval=200, repeat=False)
-    plt.show()
+    # Update frame image
+    img.set_data(newGrid)
+
+    if frameNum == framesTotal-1:
+        # Restart grid to initial values
+        grid[:] = initialGrid[:]
+        plt.close()
+    else:
+        # Update grid values
+        grid[:] = newGrid[:]
+    return img,
 
 
 def randomGrid(N, M):
@@ -114,18 +97,19 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Runs Conway's Game of Life system.py.")
 
+    # Animation, Grid and Configuration values declaration
     N = 0
     M = 0
     FRAMES = 0
     grid = np.array([])
-    globalConfigs = {}
+    configurationsCount = {}
 
+    # Animation and Grid values initialization
     try:
         file = open(sys.argv[1])
         N, M = [int(x) for x in file.readline().split(' ')]
         FRAMES = int(file.readline())
         grid = np.zeros(N*M).reshape(N, M)
-        globalConfigs = {}
 
         while True:
             l = file.readline()
@@ -143,19 +127,23 @@ def main() -> None:
         grid = randomGrid(N, M)
         print('Using default values')
 
+    # Create and give format to the output file
     exitFile = open('output.out', 'w+')
     exitFile.write('  FRAME | CONFIGURATION | NUMBER \n')
     exitFile.write(' ================================\n')
+
+    # Animation configuration, initialization, and displayed
     fig, ax = plt.subplots()
     img = ax.imshow(grid, cmap='gray', interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES, globalConfigs, exitFile),
+    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, np.copy(grid), FRAMES, configurationsCount, exitFile),
                                   frames=FRAMES, interval=1, repeat=False)
     plt.show()
-    for x in globalConfigs:
+
+    # Update final count per configuration
+    for x in configurationsCount:
         exitFile.write(
-            '  FINAL | {:<13} | {:>6}\n'.format(x, globalConfigs[x]))
+            '  FINAL | {:<13} | {:>6}\n'.format(x, configurationsCount[x]))
     exitFile.write(' --------------------------------\n')
-    print()
     exitFile.close()
 
 

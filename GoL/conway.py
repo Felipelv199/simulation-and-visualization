@@ -73,7 +73,7 @@ def iterateGrid(grid: np.ndarray, conf: dict, file: IO, frame: int) -> np.ndarra
         for x in range(0, m):
             newGrid[y, x] = checkRulesOfLife(grid, y, x)
 
-    #updateConfigCounter(grid, conf, file, frame)
+    updateConfigCounter(grid, conf, file, frame)
 
     # Return the updated grid
     return newGrid

@@ -141,7 +141,7 @@ def main() -> None:
         FRAMES = 100
         grid = randomGrid(N, M)
 
-    exitFile = open('output.txt', 'w+')
+    exitFile = open('output.out', 'w+')
     exitFile.write(' FRAME | CONFIGURATION | NUMBER \n')
     exitFile.write(' ===============================\n')
     fig, ax = plt.subplots()

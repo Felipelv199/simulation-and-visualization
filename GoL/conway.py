@@ -53,15 +53,19 @@ def updateConfigCounter(grid: np.ndarray, conf: dict, file: IO, frame: int) -> N
             configs.checkBlock(grid, y, x)
             configs.checkOthers(grid, y, x)
 
+    configurationsTotal = 0
+    for x in configs.frameConfigs:
+        configurationsTotal += configs.frameConfigs[x]
+
     # Update configurations final count and add frame configurations count to the output
     for x in configs.frameConfigs:
         try:
             conf[x] += configs.frameConfigs[x]
         except:
             conf[x] = configs.frameConfigs[x]
-        file.write(' {:^7}| {:<13} | {:>6}\n'.format(
-            frame, x, configs.frameConfigs[x]))
-    file.write(' --------------------------------\n')
+        file.write(' {:^7}| {:<13} |  {:>4}  |   {:>4}%\n'.format(
+            frame, x, configs.frameConfigs[x], int((configs.frameConfigs[x]/configurationsTotal)*100)))
+    file.write(' ---------------------------------------------\n')
 
 
 def iterateGrid(grid: np.ndarray, conf: dict, file: IO, frame: int) -> np.ndarray:
@@ -136,8 +140,8 @@ def main() -> None:
 
     # Create and give format to the output file
     exitFile = open('output.out', 'w+')
-    exitFile.write('  FRAME | CONFIGURATION | NUMBER \n')
-    exitFile.write(' ================================\n')
+    exitFile.write('  FRAME | CONFIGURATION | NUMBER | PERCENTAGE \n')
+    exitFile.write(' =============================================\n')
 
     # Animation configuration, initialization, and displayed
     fig, ax = plt.subplots()
@@ -146,11 +150,13 @@ def main() -> None:
                                   frames=FRAMES, interval=10, repeat=False)
     plt.show()
 
+    configurationsTotal = 0
+    for x in configurationsCount:
+        configurationsTotal += configurationsCount[x]
     # Update final count per configuration
     for x in configurationsCount:
         exitFile.write(
-            '  FINAL | {:<13} | {:>6}\n'.format(x, configurationsCount[x]))
-    exitFile.write(' --------------------------------\n')
+            '  FINAL | {:<13} |  {:>4}  |   {:>4}%\n'.format(x, configurationsCount[x], int((configurationsCount[x]/configurationsTotal)*100)))
     exitFile.close()
 
 

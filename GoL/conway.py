@@ -142,7 +142,7 @@ def main() -> None:
     except:
         N = 50
         M = 50
-        FRAMES = 20
+        FRAMES = 200
         grid = randomGrid(N, M)
         print('Using default values')
 

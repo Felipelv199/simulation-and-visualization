@@ -10,7 +10,13 @@ import numpy as np
 import matplotlib.image as mltimg
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from numpy.lib.function_base import average, percentile
 from configurations import Configurations
+
+
+def getPercentage(part, whole):
+    # Calculates the percentage between the part and the whole
+    return (part/whole)*100
 
 
 def checkRulesOfLife(grid: np.ndarray, i: int, j: int) -> int:
@@ -63,8 +69,10 @@ def updateConfigCounter(grid: np.ndarray, conf: dict, file: IO, frame: int) -> N
             conf[x] += configs.frameConfigs[x]
         except:
             conf[x] = configs.frameConfigs[x]
+        percentage = getPercentage(
+            configs.frameConfigs[x], configurationsTotal)
         file.write(' {:^7}| {:<13} |  {:>4}  |   {:>4}%\n'.format(
-            frame, x, configs.frameConfigs[x], int((configs.frameConfigs[x]/configurationsTotal)*100)))
+            frame, x, configs.frameConfigs[x], round(percentage, 1)))
     file.write(' ---------------------------------------------\n')
 
 
@@ -155,8 +163,9 @@ def main() -> None:
         configurationsTotal += configurationsCount[x]
     # Update final count per configuration
     for x in configurationsCount:
-        exitFile.write(
-            '  FINAL | {:<13} |  {:>4}  |   {:>4}%\n'.format(x, configurationsCount[x], int((configurationsCount[x]/configurationsTotal)*100)))
+        percentage = getPercentage(configurationsCount[x], configurationsTotal)
+        exitFile.write('  FINAL | {:<13} |  {:>4}  |   {:>4}%\n'.format(
+            x, configurationsCount[x], round(percentage, 1)))
     exitFile.close()
 
 

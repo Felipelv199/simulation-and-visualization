@@ -1,94 +1,13 @@
-from math import e
 from typing import List
-from matplotlib.pyplot import sca
 from fluid import Fluid
+import numpy as np
+import math
 import imageio
-import os
 import sys
 
 velocities = []
 densities = []
-""" 
-
-def screen_clear():
-    _ = os.system('cls')
-
-
-def command_line_read_axis(f: Fluid, a: List) -> List[int]:
-    print("Give me the position on the grid")
-    x = 0
-    while True:
-        try:
-            x = (int)(input("> axis-x: "))
-            break
-        except:
-            print("ERROR: You must introduce a number")
-    y = 0
-    while True:
-        try:
-            y = (int)(input("> axis-y: "))
-            break
-        except:
-            print("ERROR: You must introduce a number")
-    screen_clear()
-    inside = 0
-    if a.__contains__((x, y)):
-        print("ERROR: There is already a source of velocity in that position")
-    elif x > f.size or x < 0 or y > f.size or y < 0:
-        print("ERROR: Position out of bounds")
-    else:
-        inside = 1
-    return [x, y, inside]
-
-
-def command_line_reader(f: Fluid):
-    print("Do you want to set sources of density?")
-    while True:
-        response = input("> y or n: ").lower()
-        if response == 'y' or response == 'n':
-            break
-
-    screen_clear()
-    if response == 'y':
-        while True:
-            x, y, inside = command_line_read_axis(f, densities)
-            if inside:
-                densities.append((x, y))
-                screen_clear()
-            print("Do you want to set another source of density?")
-            print("Current sources of density -> ", densities)
-            while True:
-                response = input("> y or n: ").lower()
-                if response == 'y' or response == 'n':
-                    break
-            screen_clear()
-            if response == "n":
-                break
-
-    print("Do you want to set sources of velocity?")
-    while True:
-        response = input("> y or n: ").lower()
-        if response == 'y' or response == 'n':
-            break
-
-    screen_clear()
-    if response == 'y':
-        while True:
-            x, y, inside = command_line_read_axis(f, velocities)
-            if inside:
-                velocities.append((x, y))
-                screen_clear()
-            print("Do you want to set another source of velocity?")
-            print("Current sources of velocity -> ", velocities)
-            while True:
-                response = input("> y or n: ").lower()
-                if response == 'y' or response == 'n':
-                    break
-
-            screen_clear()
-            if response == "n":
-                break
- """
+color = []
 
 
 def input_file_reader(path: str, f: Fluid) -> None:
@@ -97,24 +16,17 @@ def input_file_reader(path: str, f: Fluid) -> None:
     except:
         print("ERROR: File not found")
         return
-    n = 0
+
+    # Read simulation color
+    s = file.readline().split(" ")
+    for c in s:
+        color.append(int(c))
+    n = int(file.readline())
+
     # Read sources of density
-    while True:
-        s = file.readline()
-        if s == '':
-            n = 0
-            break
-        else:
-            try:
-                n = (int)(s)
-                break
-            except:
-                continue
     for _ in range(n):
-        s = file.readline()
-        if s == '':
-            break
-        x, y = [(int)(x.replace("\n", "")) for x in s.split(" ")]
+        s = file.readline().split(" ")
+        x, y = [int(x) for x in s]
         if densities.__contains__((x, y)):
             print(
                 "ERROR: There is already a source of density in that position ->", (x, y))
@@ -125,31 +37,47 @@ def input_file_reader(path: str, f: Fluid) -> None:
     print("Current sources of density ->", densities)
 
     # Read sources of velocity
-    while True:
-        s = file.readline()
-        if s == '':
-            n = 0
-            break
-        else:
-            try:
-                n = (int)(s)
-                break
-            except:
-                continue
-
+    n = int(file.readline())
     for _ in range(n):
-        s = file.readline()
-        if s == '':
-            break
-        x, y = [(int)(x.replace("\n", "")) for x in s.split(" ")]
+        s = file.readline().split(" ")
+        x = int(s[0])
+        y = int(s[1])
         if velocities.__contains__((x, y)):
             print(
                 "ERROR: There is already a source of velocity in that position ->", (x, y))
         elif x > f.size or x < 0 or y > f.size or y < 0:
-            print("ERROR: Position out of bounds ->", (x, y))
+            print("ERROR: Position out of bounds ->", (x, y, p))
         else:
-            velocities.append((x, y))
+            name = s[2]
+            if name == "spinner":
+                velocities.append((x, y, name, int(s[3]), int(s[4])))
+            elif name == "waver":
+                velocities.append(
+                    (x, y, name, int(s[3]), int(s[4]), int(s[5])))
     print("Current sources of velocity ->", velocities)
+
+
+def get_color_image(c: List[int], intensity: float, m: int, n: int, f: Fluid) -> List[List[int]]:
+    pixels = []
+    for i in range(m):
+        row = []
+        for j in range(n):
+            r = (c[0] / 255.0) * (f.density[i, j] / intensity)
+            g = (c[1] / 255.0) * (f.density[i, j] / intensity)
+            b = (c[2] / 255.0) * (f.density[i, j] / intensity)
+            row.append([r, g, b])
+        pixels.append(row)
+    return pixels
+
+
+def spinner_animation(period: int, direction: int, f: int) -> List[int]:
+    angle = math.radians(f*period*direction)
+    return [math.sin(angle), math.cos(angle)]
+
+
+def waver_animation(period: float, amplitud: float, direction: int, f: int) -> List[int]:
+    angle = math.sin(f*period*math.pi/amplitud)
+    return [math.sin(angle), direction*math.cos(angle)]
 
 
 if __name__ == "__main__":
@@ -158,11 +86,12 @@ if __name__ == "__main__":
         from matplotlib import animation
 
         inst = Fluid()
-        # Read input from command line
-        # command_line_reader(inst)
 
-        # Read input from input file
-        input_file_reader(sys.argv[1], inst)
+        # Read input file
+        try:
+            input_file_reader(sys.argv[1], inst)
+        except:
+            print('ERROR: Any command line arguments detected')
 
         def update_im(i):
             # We add new density creators in here
@@ -170,32 +99,53 @@ if __name__ == "__main__":
                 if i == 1:
                     print(
                         "WARNING: Any source of density found, running default density source")
-                # add density into a 3*3 square
-                inst.density[14:17, 14:17] += 100
             else:
                 for density in densities:
                     x, y = density
                     inst.density[y, x] += 100
+
             # We add velocity vector values in here
             if len(velocities) == 0:
                 if i == 1:
                     print(
                         "WARNING: Any source of velocity found, running default velocity source")
-                inst.velo[20, 20] = [-2, -2]
             else:
                 for velocity in velocities:
-                    x, y = velocity
-                    inst.velo[y, x] = [-2, -2]
+                    x = velocity[0]
+                    y = velocity[1]
+                    name = velocity[2]
+                    if name == "spinner":
+                        inst.velo[y, x] = spinner_animation(
+                            velocity[3], velocity[4], i)
+                    elif name == "waver":
+                        inst.velo[y, x] = waver_animation(
+                            velocity[3], velocity[4],  velocity[5], i)
             inst.step()
-            im.set_array(inst.density)
+
+            # Object assignation to the grid
+            for i in range(25, 30):
+                for j in range(25, 30):
+                    inst.density[i, j] = 0
+                    inst.velo[i, j, 0] = 0
+                    inst.velo[i, j, 1] = 0
+
+            # Calculus and assignation of the color to the image
+            m, n = inst.density.shape
+            maxs = []
+            for i in range(m):
+                maxs.append(max(inst.density[i]))
+            image = get_color_image(color, max(maxs), m, n, inst)
+
+            # Update the outputs
+            im.set_array(image)
             q.set_UVC(inst.velo[:, :, 1], inst.velo[:, :, 0])
-            # print(f"Density sum: {inst.density.sum()}")
             im.autoscale()
 
         fig = plt.figure()
 
         # plot density
-        im = plt.imshow(inst.density, vmax=100, interpolation='bilinear')
+        im = plt.imshow(inst.density, vmax=100,
+                        interpolation='bilinear')
 
         # plot vector field
         q = plt.quiver(inst.velo[:, :, 1],

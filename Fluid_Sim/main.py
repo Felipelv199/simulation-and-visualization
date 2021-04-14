@@ -18,15 +18,17 @@ def input_file_reader(path: str, f: Fluid) -> None:
         print("ERROR: File not found")
         return
 
+    file_lines = file.readlines().copy()
+
     # Read simulation color
-    s = file.readline().split(" ")
+    s = file_lines.pop(0).split(" ")
     for c in s:
         color.append(int(c))
-    n = int(file.readline())
+    n = int(file_lines.pop(0))
 
     # Read sources of density
     for _ in range(n):
-        s = file.readline().split(" ")
+        s = file_lines.pop(0).split(" ")
         x, y = [int(x) for x in s]
         if densities.__contains__((x, y)):
             print(
@@ -38,9 +40,9 @@ def input_file_reader(path: str, f: Fluid) -> None:
     print("Current sources of density ->", densities)
 
     # Read sources of velocity
-    n = int(file.readline())
+    n = int(file_lines.pop(0))
     for _ in range(n):
-        s = file.readline().split(" ")
+        s = file_lines.pop(0).split(" ")
         x = int(s[0])
         y = int(s[1])
         if velocities_positions.__contains__((x, y)):
@@ -60,9 +62,9 @@ def input_file_reader(path: str, f: Fluid) -> None:
     print("Current sources of velocity ->", velocities_positions)
 
     # Read objects
-    n = int(file.readline())
+    n = int(file_lines.pop(0))
     for _ in range(n):
-        s = file.readline().split(" ")
+        s = file_lines.pop(0).split(" ")
         x = int(s[0])
         y = int(s[1])
         if objects_positions.__contains__((x, y)) or velocities_positions.__contains__((x, y)) or densities.__contains__((x, y)):
@@ -152,7 +154,8 @@ if __name__ == "__main__":
     try:
         input_file_reader(sys.argv[1], inst)
     except:
-        print('ERROR: Any command line arguments detected')
+        input_file_reader("example_input.txt", inst)
+        print('ERROR: Something went wrong when reading the file')
 
     def update_im(frame):
         # We add new density creators in here

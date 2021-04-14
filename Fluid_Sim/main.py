@@ -1,13 +1,14 @@
 from typing import List
 from fluid import Fluid
-import numpy as np
 import math
-import imageio
 import sys
 
-velocities = []
+velocities_positions = []
+velocities_properties = []
 densities = []
 color = []
+objects_positions = []
+objects_properties = []
 
 
 def input_file_reader(path: str, f: Fluid) -> None:
@@ -42,19 +43,44 @@ def input_file_reader(path: str, f: Fluid) -> None:
         s = file.readline().split(" ")
         x = int(s[0])
         y = int(s[1])
-        if velocities.__contains__((x, y)):
+        if velocities_positions.__contains__((x, y)):
             print(
                 "ERROR: There is already a source of velocity in that position ->", (x, y))
         elif x > f.size or x < 0 or y > f.size or y < 0:
-            print("ERROR: Position out of bounds ->", (x, y, p))
+            print("ERROR: Position out of bounds ->", (x, y))
         else:
             name = s[2]
             if name == "spinner":
-                velocities.append((x, y, name, int(s[3]), int(s[4])))
+                velocities_positions.append((x, y))
+                velocities_properties.append((name, int(s[3]), int(s[4])))
             elif name == "waver":
-                velocities.append(
-                    (x, y, name, int(s[3]), int(s[4]), int(s[5])))
-    print("Current sources of velocity ->", velocities)
+                velocities_positions.append((x, y))
+                velocities_properties.append(
+                    (name, int(s[3]), int(s[4]), int(s[5]), int(s[6])))
+    print("Current sources of velocity ->", velocities_positions)
+
+    # Read objects
+    n = int(file.readline())
+    for _ in range(n):
+        s = file.readline().split(" ")
+        x = int(s[0])
+        y = int(s[1])
+        if objects_positions.__contains__((x, y)) or velocities_positions.__contains__((x, y)) or densities.__contains__((x, y)):
+            print(
+                "ERROR: Object position already in use ->", (x, y))
+        elif x > f.size or x < 0 or y > f.size or y < 0:
+            print("ERROR: Position object out of bounds ->", (x, y))
+        else:
+            name = s[2]
+            if name == 'square':
+                objects_positions.append((x, y))
+                objects_properties.append((name, int(s[3])))
+            elif name == 'rectangle':
+                objects_positions.append((x, y))
+                objects_properties.append((name, int(s[3]), int(s[4])))
+            elif name == 'circle':
+                objects_positions.append((x, y))
+                objects_properties.append((name, int(s[3])))
 
 
 def get_color_image(c: List[int], intensity: float, m: int, n: int, f: Fluid) -> List[List[int]]:
@@ -75,98 +101,134 @@ def spinner_animation(period: int, direction: int, f: int) -> List[int]:
     return [math.sin(angle), math.cos(angle)]
 
 
-def waver_animation(period: float, amplitud: float, direction: int, f: int) -> List[int]:
+def waver_animation(horientation: int, period: float, amplitud: float, direction: int, f: int) -> List[int]:
     angle = math.sin(f*period*math.pi/amplitud)
-    return [math.sin(angle), direction*math.cos(angle)]
+    if horientation == 1:
+        return [math.sin(angle), direction*math.cos(angle)]
+    else:
+        return [direction*math.cos(angle), math.sin(angle)]
+
+
+def add_rectangle(w: int, h: int, x0: int, y0: int, fluid: Fluid):
+    difH = int(h/2)
+    difW = int(w/2)
+    for i in range(y0-difH, y0+difH):
+        for j in range(x0-difW, x0+difW):
+            fluid.density[i, j] = 0
+            fluid.velo[i, j, 0] = 0
+            fluid.velo[i, j, 1] = 0
+
+
+def add_square(w: int, x0: int, y0: int, fluid: Fluid):
+    dif = int(w/2)
+    for i in range(y0-dif, y0+dif):
+        for j in range(x0-dif, x0+dif):
+            fluid.density[i, j] = 0
+            fluid.velo[i, j, 0] = 0
+            fluid.velo[i, j, 1] = 0
+
+
+def add_circle(r: int, x0: int, y0: int, fluid: Fluid):
+    dif = r+1
+    for i in range(y0-dif, y0+dif):
+        for j in range(x0-dif, x0+dif):
+            x = j-x0
+            y = i-y0
+            d = math.sqrt(x**2+y**2)
+            if abs(d-r) < .6:
+                fluid.density[i, j] = 0
+                fluid.velo[i, j, 0] = 0
+                fluid.velo[i, j, 1] = 0
 
 
 if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    from matplotlib import animation
+
+    inst = Fluid()
+
+    # Read input file
+    file_name = sys.argv[1]
     try:
-        import matplotlib.pyplot as plt
-        from matplotlib import animation
+        input_file_reader(sys.argv[1], inst)
+    except:
+        print('ERROR: Any command line arguments detected')
 
-        inst = Fluid()
+    def update_im(frame):
+        # We add new density creators in here
+        if len(densities) == 0:
+            if frame == 1:
+                print(
+                    "WARNING: Any source of density found, running default density source")
+        else:
+            for density in densities:
+                x, y = density
+                inst.density[y, x] += 100
 
-        # Read input file
-        try:
-            input_file_reader(sys.argv[1], inst)
-        except:
-            print('ERROR: Any command line arguments detected')
+        # We add velocity vector values in here
+        if len(velocities_positions) == 0:
+            if frame == 1:
+                print(
+                    "WARNING: Any source of velocity found, running default velocity source")
+        else:
+            for i in range(len(velocities_positions)):
+                x, y = velocities_positions[i]
+                velocity = velocities_properties[i]
+                name = velocity[0]
+                if name == "spinner":
+                    inst.velo[y, x] = spinner_animation(
+                        velocity[1], velocity[2], frame)
+                elif name == "waver":
+                    inst.velo[y, x] = waver_animation(
+                        velocity[1], velocity[2],  velocity[3],  velocity[4], frame)
+        inst.step()
 
-        def update_im(i):
-            # We add new density creators in here
-            if len(densities) == 0:
-                if i == 1:
-                    print(
-                        "WARNING: Any source of density found, running default density source")
-            else:
-                for density in densities:
-                    x, y = density
-                    inst.density[y, x] += 100
+        # Object assignation to the grid
+        for i in range(len(objects_positions)):
+            x, y = objects_positions[i]
+            obj = objects_properties[i]
+            name = obj[0]
+            if name == 'square':
+                add_square(obj[1], x, y, inst)
+            elif name == 'rectangle':
+                add_rectangle(obj[1], obj[2], x, y, inst)
+            elif name == 'circle':
+                add_circle(obj[1], x, y, inst)
 
-            # We add velocity vector values in here
-            if len(velocities) == 0:
-                if i == 1:
-                    print(
-                        "WARNING: Any source of velocity found, running default velocity source")
-            else:
-                for velocity in velocities:
-                    x = velocity[0]
-                    y = velocity[1]
-                    name = velocity[2]
-                    if name == "spinner":
-                        inst.velo[y, x] = spinner_animation(
-                            velocity[3], velocity[4], i)
-                    elif name == "waver":
-                        inst.velo[y, x] = waver_animation(
-                            velocity[3], velocity[4],  velocity[5], i)
-            inst.step()
+        # Calculate and assign the image color
+        m, n = inst.density.shape
+        maxs = []
+        for i in range(m):
+            maxs.append(max(inst.density[i]))
+        image = get_color_image(color, max(maxs), m, n, inst)
 
-            # Object assignation to the grid
-            for i in range(25, 30):
-                for j in range(25, 30):
-                    inst.density[i, j] = 0
-                    inst.velo[i, j, 0] = 0
-                    inst.velo[i, j, 1] = 0
+        # Update the outputs
+        im.set_array(image)
+        q.set_UVC(inst.velo[:, :, 1], inst.velo[:, :, 0])
+        im.autoscale()
 
-            # Calculus and assignation of the color to the image
-            m, n = inst.density.shape
-            maxs = []
-            for i in range(m):
-                maxs.append(max(inst.density[i]))
-            image = get_color_image(color, max(maxs), m, n, inst)
+    fig = plt.figure()
 
-            # Update the outputs
-            im.set_array(image)
-            q.set_UVC(inst.velo[:, :, 1], inst.velo[:, :, 0])
-            im.autoscale()
+    # Plot density
+    im = plt.imshow(inst.density, vmax=100,
+                    interpolation='bilinear')
 
-        fig = plt.figure()
+    # Plot vector field
+    q = plt.quiver(inst.velo[:, :, 1],
+                   inst.velo[:, :, 0], scale=10, angles='xy')
+    anim = animation.FuncAnimation(
+        fig, update_im, interval=1, save_count=1000)
 
-        # plot density
-        im = plt.imshow(inst.density, vmax=100,
-                        interpolation='bilinear')
+    # Write and creates video file
 
-        # plot vector field
-        q = plt.quiver(inst.velo[:, :, 1],
-                       inst.velo[:, :, 0], scale=10, angles='xy')
-        anim = animation.FuncAnimation(fig, update_im, interval=0)
-        # anim.save("movie.mp4", fps=30, extra_args=['-vcodec', 'libx264'])
-        plt.show()
+    """ name, extension = file_name.split(".")
+        writervideo = animation.FFMpegWriter(fps=30)
+        anim.save("movie.mp4", writer=writervideo)
+        pillow = animation.PillowWriter(fps=30)
+        print("Start Date Time: ", time.ctime())
+        currTime = time.time()
+        anim.save(name+".gif", pillow)
+        print("End Date Time: ", time.ctime())
+        print("Duration: ", time.time()-currTime, "s") """
 
-    except ImportError:
-
-        frames = 30
-
-        flu = Fluid()
-
-        video = np.full((frames, flu.size, flu.size), 0, dtype=float)
-
-        for step in range(0, frames):
-            flu.density[4:7, 4:7] += 100  # add density into a 3*3 square
-            flu.velo[5, 5] += [1, 2]
-
-            flu.step()
-            video[step] = flu.density
-
-        imageio.mimsave('./video.gif', video.astype('uint8'))
+    plt.show()

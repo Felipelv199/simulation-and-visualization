@@ -79,11 +79,11 @@ x y N W
 ```
 > Rectangle
 ```
-x y N W H
+x y Name W H
 ```
 > Circle
 ```
-x y N R
+x y Name R
 ```
 So at the end, the file should look like this.
 ```
@@ -93,7 +93,7 @@ x y
 N
 x y Name P D || x y Name H P A D
 N
-x y N W || x y N W H || x y N R
+x y Name W || x y Name W H || x y Name R
 ```
 ## Sources of Velocity and Density
 ## Velocity Fources Animation

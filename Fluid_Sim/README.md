@@ -97,6 +97,6 @@ x y Name W || x y Name W H || x y Name R
 ```
 ## Density Sources
 ## Velocity Sources
-## Velocity Fources Animation
+## Velocity Sources Animation
 ## Simulation Color
 ## Objects

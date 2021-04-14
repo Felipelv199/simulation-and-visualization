@@ -95,7 +95,8 @@ x y Name P D || x y Name H P A D
 N
 x y Name W || x y Name W H || x y Name R
 ```
-## Sources of Velocity and Density
+## Density Sources
+## Velocity Sources
 ## Velocity Fources Animation
 ## Simulation Color
 ## Objects

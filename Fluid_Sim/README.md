@@ -66,7 +66,7 @@ The following N lines represent the location and properties of the objects.
 - 0 ≥ x ≤ GridSize
 - 0 ≥ y ≤ GridSize
 - Object Name
-  - N = square || circle || rectangle
+  - Name = square || circle || rectangle
 - Width
   - W > 0
 - Height
@@ -75,7 +75,7 @@ The following N lines represent the location and properties of the objects.
   - R > 0
 > Square
 ```
-x y N W
+x y Name W
 ```
 > Rectangle
 ```

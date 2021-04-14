@@ -85,6 +85,16 @@ x y N W H
 ```
 x y N R
 ```
+So at the end, the file should look like this.
+```
+r g b
+N
+x y
+N
+x y Name P D || x y Name H P A D
+N
+x y N W || x y N W H || x y N R
+```
 ## Sources of Velocity and Density
 ## Velocity Fources Animation
 ## Simulation Color

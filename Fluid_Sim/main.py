@@ -246,7 +246,7 @@ if __name__ == "__main__":
     q = plt.quiver(inst.velo[:, :, 1],
                    inst.velo[:, :, 0], scale=10, angles='xy')
     anim = animation.FuncAnimation(
-        fig, update_im, interval=1, save_count=1000)
+        fig, update_im, interval=1, save_count=500)
 
     # Write and creates video file
 

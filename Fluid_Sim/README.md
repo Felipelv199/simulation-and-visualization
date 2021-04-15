@@ -116,21 +116,21 @@ The following lines show how each one behaves.
 
 >Spinner
 
-![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/spinner-ex-1.gif)
-![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/spinner-ex-2.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/main/Fluid_Sim/media/spinner-ex-1.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/main/Fluid_Sim/media/spinner-ex-2.gif)
 >Waver
 
-![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/waver-ex-1.gif)
-![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/waver-ex-2.gif)
-![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/waver-ex-3.gif)
-![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/waver-ex-4.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/main/Fluid_Sim/media/waver-ex-1.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/main/Fluid_Sim/media/waver-ex-2.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/main/Fluid_Sim/media/waver-ex-3.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/main/Fluid_Sim/media/waver-ex-4.gif)
 ## Simulation Color
 The color affects the way a density looks. In the above images, you can look, that the color is white, but you select the color you want in RGB and, the density sources will take it.
 
-![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/color-ex-1.gif)
-![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/color-ex-2.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/main/Fluid_Sim/media/color-ex-1.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/main/Fluid_Sim/media/color-ex-2.gif)
 ## Objects
 The objects placed on the grid generate a rupture on the fluid flow, the fluid will kind of bounce on them and spread across their boundaries.
 
-![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/object-ex-1.gif)
-![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/object-ex-2.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/main/Fluid_Sim/media/object-ex-1.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/main/Fluid_Sim/media/object-ex-2.gif)

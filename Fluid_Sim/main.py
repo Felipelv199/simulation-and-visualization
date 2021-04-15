@@ -4,7 +4,6 @@ from matplotlib import animation
 import matplotlib.pyplot as plt
 import math
 import sys
-import time
 
 velocities_positions = []
 velocities_properties = []
@@ -246,19 +245,14 @@ if __name__ == "__main__":
     q = plt.quiver(inst.velo[:, :, 1],
                    inst.velo[:, :, 0], scale=10, angles='xy')
     anim = animation.FuncAnimation(
-        fig, update_im, interval=1, save_count=250)
+        fig, update_im, interval=1, save_count=500)
 
-    # Write and creates video file
+    # Write and creates mp4 video file
+    """ writervideo = animation.FFMpegWriter(fps=30)
+    anim.save("movie.mp4", writer=writervideo) """
 
-    """writervideo = animation.FFMpegWriter(fps=30)
-        anim.save("movie.mp4", writer=writervideo)
-        print("Duration: ", time.time()-currTime, "s") """
-
-    """ name, extension = file_name.split(".")
-    pillow = animation.PillowWriter(fps=30)
-    print("Start Date Time: ", time.ctime())
-    currTime = time.time()
-    anim.save(name+".gif", pillow)
-    print("End Date Time: ", time.ctime()) """
+    # Write and creates gif image file
+    """ pillow = animation.PillowWriter(fps=30)
+    anim.save("movie.gif", pillow) """
 
     plt.show()

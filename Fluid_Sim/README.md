@@ -104,6 +104,18 @@ They are distinguish from the background with a different color, they appear in 
 ![image](https://user-images.githubusercontent.com/47803931/114804871-43ce9c80-9d5f-11eb-92ae-35b5b417cf3e.png)
 ![image](https://user-images.githubusercontent.com/47803931/114805077-9445fa00-9d5f-11eb-9d92-d8ca5a147030.png)
 ## Velocity Sources
+They interact with the density sources, affecting the densities in each grid. They can move the density changing its position and decreasing its value on the original grid, passing part of it to another grid.
 ## Velocity Sources Animation
+You can achieve these effects by modifying the direction of the velocity forces applied to the densities.
+
+On this simulation, you can add to the grid two animations:
+- Waver
+- Spinner
+
+The following lines show how each one behaves.
+
+>Spinner
+
+>Waver
 ## Simulation Color
 ## Objects

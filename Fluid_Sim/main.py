@@ -246,7 +246,7 @@ if __name__ == "__main__":
     q = plt.quiver(inst.velo[:, :, 1],
                    inst.velo[:, :, 0], scale=10, angles='xy')
     anim = animation.FuncAnimation(
-        fig, update_im, interval=1, save_count=500)
+        fig, update_im, interval=1, save_count=250)
 
     # Write and creates video file
 
@@ -254,11 +254,11 @@ if __name__ == "__main__":
         anim.save("movie.mp4", writer=writervideo)
         print("Duration: ", time.time()-currTime, "s") """
 
-    name, extension = file_name.split(".")
+    """ name, extension = file_name.split(".")
     pillow = animation.PillowWriter(fps=30)
     print("Start Date Time: ", time.ctime())
     currTime = time.time()
     anim.save(name+".gif", pillow)
-    print("End Date Time: ", time.ctime())
+    print("End Date Time: ", time.ctime()) """
 
     plt.show()

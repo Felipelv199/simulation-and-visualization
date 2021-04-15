@@ -100,7 +100,7 @@ x y Name R
 ```
 ## Density Sources
 They are distinguish from the background with a different color, they appear in the position that you place them on the grid. Some cells of the grid may have a more strong color than the others, this is becouse of the current density that cell has. The greater the density the stronger the color will be and when the difference between the bigger density and the smaller is incresasing the smaller will be decreasing.
-![image](https://user-images.githubusercontent.com/47803931/114803500-cdc93600-9d5c-11eb-9342-731db921bf70.png)
+![image](https://user-images.githubusercontent.com/47803931/114804871-43ce9c80-9d5f-11eb-92ae-35b5b417cf3e.png)
 ## Velocity Sources
 ## Velocity Sources Animation
 ## Simulation Color

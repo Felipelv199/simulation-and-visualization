@@ -116,6 +116,13 @@ The following lines show how each one behaves.
 
 >Spinner
 
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/spinner-ex-1.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/spinner-ex-2.gif)
 >Waver
+
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/waver-ex-1.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/waver-ex-2.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/waver-ex-3.gif)
+![image](https://github.com/Felipelv199/simulation-and-visualization/blob/feature/fluid-simulation/Fluid_Sim/media/waver-ex-4.gif)
 ## Simulation Color
 ## Objects

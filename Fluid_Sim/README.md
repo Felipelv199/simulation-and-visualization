@@ -85,17 +85,22 @@ x y Name W H
 ```
 x y Name R
 ```
-So at the end, the file should look like this.
+So at the end, the file should look kind of this.
 ```
 r g b
 N
 x y
 N
-x y Name P D || x y Name H P A D
+x y Name P D
+x y Name H P A D
 N
-x y Name W || x y Name W H || x y Name R
+x y Name W
+x y Name W H
+x y Name R
 ```
 ## Density Sources
+They are distinguish from the background with a different color, they appear in the position that you place them on the grid. Some cells of the grid may have a more strong color than the others, this is becouse of the current density that cell has. The greater the density the stronger the color will be and when the difference between the bigger density and the smaller is incresasing the smaller will be decreasing.
+![image](https://user-images.githubusercontent.com/47803931/114803500-cdc93600-9d5c-11eb-9342-731db921bf70.png)
 ## Velocity Sources
 ## Velocity Sources Animation
 ## Simulation Color

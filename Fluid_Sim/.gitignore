@@ -1,6 +1,7 @@
 # Files
 *.pdf
 *.html
+*.zip
 
 # Directories
 /__pycache__
